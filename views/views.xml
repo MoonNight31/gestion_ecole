@@ -130,7 +130,6 @@
                 <field name="telephone"/>
                 <field name="type_profil"/>
                 <field name="formation_id"/>
-                <field name="entreprise_id"/>
                 <field name="is_alumni"/>
             </tree>
         </field>
@@ -160,12 +159,7 @@
                         <field name="adresse" placeholder="Adresse complète..."/>
                     </group>
                     <group>
-                        <group>
-                            <field name="formation_id" invisible="type_profil not in ('etudiant', 'alumni')"/>
-                        </group>
-                        <group>
-                            <field name="entreprise_id" invisible="type_profil != 'salarie'"/>
-                        </group>
+                        <field name="formation_id" invisible="type_profil not in ('etudiant', 'alumni')"/>
                     </group>
                 </sheet>
             </form>

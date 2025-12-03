@@ -65,9 +65,6 @@ class SchoolPersonne(models.Model):
     is_intervenant = fields.Boolean(string="Est intervenant", default=False)
     
     # Relations
-    entreprise_id = fields.Many2one('entreprise.entreprise', string="Entreprise", 
-                                    ondelete='set null',
-                                    help="Entreprise d'emploi pour les salariés")
     formation_id = fields.Many2one('school.formation', string="Formation",
                                    ondelete='set null', 
                                    help="Formation suivie (pour les étudiants)")
