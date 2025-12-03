@@ -1,15 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <data>
 
+    <!-- ========== RP (Responsable Pédagogique) ========== -->
     <record id="view_rp_tree" model="ir.ui.view">
         <field name="name">res.partner.rp.tree</field>
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="id" string="ID RP" width="50px"/>
+                <field name="id" string="ID" width="50px"/>
                 <field name="display_name" string="Nom &amp; Prénom"/>
                 <field name="email"/>
                 <field name="phone"/>
+                <field name="formation_count"/>
                 <field name="write_date" string="Dernière MAJ" widget="date"/>
             </tree>
         </field>
@@ -21,29 +24,12 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             
-            <!-- Smart button pour les filiales -->
-            <div name="button_box" position="inside">
-                <button name="action_view_subsidiaries" 
-                        type="object" 
-                        class="oe_stat_button" 
-                        icon="fa-building-o"
-                        invisible="not is_group">
-                    <div class="o_field_widget o_stat_info">
-                        <span class="o_stat_value"><field name="subsidiary_count"/></span>
-                        <span class="o_stat_text">Filiales</span>
-                    </div>
-                </button>
-            </div>
-
-            <!-- Ajout des champs is_rp et is_group -->
+            <!-- Ajout du champ is_rp -->
             <field name="category_id" position="after">
-                <group col="4">
-                    <field name="is_rp"/>
-                    <field name="is_group"/>
-                </group>
+                <field name="is_rp"/>
             </field>
 
-            <!-- Onglets supplémentaires -->
+            <!-- Onglet supplémentaire pour les RP -->
             <notebook position="inside">
                 <page string="Infos Admin RP" invisible="not is_rp">
                     <group>
@@ -51,14 +37,16 @@
                             <field name="id" string="ID RP (Unique)" readonly="1"/>
                             <field name="create_date" string="Date de création" readonly="1"/>
                             <field name="write_date" string="Dernière modification" readonly="1"/>
+                            <field name="formation_count" string="Nombre de formations"/>
                         </group>
                     </group>
-                </page>
-                <page string="Groupe Info" invisible="not is_group">
-                    <group>
-                        <field name="siren"/>
-                        <field name="siege_social"/>
-                    </group>
+                    <field name="formation_ids">
+                        <tree>
+                            <field name="type_formation"/>
+                            <field name="etudiant_count"/>
+                            <field name="create_date"/>
+                        </tree>
+                    </field>
                 </page>
             </notebook>
 
@@ -66,30 +54,24 @@
     </record>
 
     <record id="action_rp_list" model="ir.actions.act_window">
-        <field name="name">Mes RP</field>
+        <field name="name">Responsables Pédagogiques</field>
         <field name="res_model">res.partner</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="view_id" ref="view_rp_tree"/>
         <field name="domain">[('is_rp', '=', True)]</field>
         <field name="context">{'default_is_rp': True, 'default_is_company': False}</field>
     </record>
 
-    <menuitem id="menu_school_root" name="Gestion École" sequence="10" web_icon="base,static/description/icon.png"/>
-    
-    <menuitem id="menu_rp" 
-              name="Responsables Pédagogiques" 
-              parent="menu_school_root" 
-              action="action_rp_list" 
-              sequence="1"/>
-
+    <!-- ========== FORMATION ========== -->
     <record id="view_formation_tree" model="ir.ui.view">
         <field name="name">school.formation.tree</field>
         <field name="model">school.formation</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="id" string="ID" width="50px"/>
-                <field name="name"/>
+                <field name="type_formation"/>
                 <field name="rp_id"/>
+                <field name="etudiant_count"/>
                 <field name="create_date" string="Créée le"/>
                 <field name="write_date" string="MàJ le"/>
             </tree>
@@ -104,14 +86,27 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="name"/>
+                            <field name="type_formation"/>
                             <field name="rp_id"/>
+                            <field name="etudiant_count"/>
                         </group>
                         <group>
                             <field name="create_date" readonly="1"/>
                             <field name="write_date" readonly="1"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Étudiants">
+                            <field name="personne_ids" domain="[('type_profil', '=', 'etudiant')]">
+                                <tree>
+                                    <field name="display_name"/>
+                                    <field name="email"/>
+                                    <field name="telephone"/>
+                                    <field name="type_profil"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -123,25 +118,127 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <!-- ========== PERSONNE (Étudiant, Alumni, Intervenant, Salarié) ========== -->
+    <record id="view_personne_tree" model="ir.ui.view">
+        <field name="name">school.personne.tree</field>
+        <field name="model">school.personne</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="id" string="ID" width="50px"/>
+                <field name="display_name"/>
+                <field name="email"/>
+                <field name="telephone"/>
+                <field name="type_profil"/>
+                <field name="formation_id"/>
+                <field name="entreprise_id"/>
+                <field name="is_alumni"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_personne_form" model="ir.ui.view">
+        <field name="name">school.personne.form</field>
+        <field name="model">school.personne</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="nom"/>
+                            <field name="prenom"/>
+                            <field name="email"/>
+                            <field name="telephone"/>
+                        </group>
+                        <group>
+                            <field name="type_profil"/>
+                            <field name="is_alumni"/>
+                            <field name="is_intervenant"/>
+                            <field name="poste"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="adresse" placeholder="Adresse complète..."/>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="formation_id" invisible="type_profil not in ['etudiant', 'alumni']"/>
+                        </group>
+                        <group>
+                            <field name="entreprise_id" invisible="type_profil != 'salarie'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Contrats (Étudiant)" invisible="type_profil != 'etudiant'">
+                            <field name="contrat_etudiant_ids">
+                                <tree>
+                                    <field name="type_contrat"/>
+                                    <field name="entreprise_id"/>
+                                    <field name="personne_tuteur_id"/>
+                                    <field name="date_started"/>
+                                    <field name="date_ended"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Contrats (Tuteur)" invisible="type_profil != 'salarie'">
+                            <field name="contrat_tuteur_ids">
+                                <tree>
+                                    <field name="type_contrat"/>
+                                    <field name="personne_etudiant_id"/>
+                                    <field name="entreprise_id"/>
+                                    <field name="date_started"/>
+                                    <field name="date_ended"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_personne" model="ir.actions.act_window">
+        <field name="name">Personnes</field>
+        <field name="res_model">school.personne</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_etudiant" model="ir.actions.act_window">
+        <field name="name">Étudiants</field>
+        <field name="res_model">school.personne</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type_profil', '=', 'etudiant')]</field>
+        <field name="context">{'default_type_profil': 'etudiant'}</field>
+    </record>
+
+    <!-- ========== MENU ========== -->
+    <menuitem id="menu_school_root" 
+              name="Gestion École" 
+              sequence="10" 
+              web_icon="base,static/description/icon.png"/>
+    
+    <menuitem id="menu_rp" 
+              name="Responsables Pédagogiques" 
+              parent="menu_school_root" 
+              action="action_rp_list" 
+              sequence="1"/>
+
     <menuitem id="menu_formation" 
               name="Formations" 
               parent="menu_school_root" 
               action="action_formation" 
               sequence="2"/>
 
-    <record id="action_group_list" model="ir.actions.act_window">
-        <field name="name">Groupes d'Entreprises</field>
-        <field name="res_model">res.partner</field>
-        <field name="view_mode">kanban,tree,form</field>
-        <field name="domain">[('is_group', '=', True)]</field>
-        <field name="context">{'default_is_group': True, 'default_is_company': True}</field>
-    </record>
-
-    <menuitem id="menu_group" 
-              name="Groupes Entreprises" 
+    <menuitem id="menu_etudiant" 
+              name="Étudiants" 
               parent="menu_school_root" 
-              action="action_group_list" 
+              action="action_etudiant" 
               sequence="3"/>
+
+    <menuitem id="menu_personne" 
+              name="Toutes les Personnes" 
+              parent="menu_school_root" 
+              action="action_personne" 
+              sequence="4"/>
 
   </data>
 </odoo>

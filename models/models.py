@@ -1,57 +1,80 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
-from odoo import models, fields
 
-# Ajout du modèle Formation
-class SchoolFormation(models.Model):
-    _name = 'school.formation'       # Nom technique de la table (school_formation)
-    _description = 'Formation'
+from odoo import models, fields, api
 
-    name = fields.Char(string="Type de formation", required=True)
-    
-    # Lien vers le RP (On filtre pour ne pouvoir choisir QUE des RP)
-    rp_id = fields.Many2one('res.partner', string="Responsable Pédagogique", domain=[('is_rp', '=', True)])
-
-    # Note : 
-    # - id est automatique
-    # - create_date est automatique
-    # - write_date est automatique
-
-# Extension du modèle res.partner pour ajouter le marqueur RP
+# ========== RESPONSABLE PÉDAGOGIQUE (RP) ==========
 class ResPartner(models.Model):
-    _inherit = 'res.partner' # On modifie le contact standard
+    _inherit = 'res.partner'
 
-    # Notre marqueur pour identifier les RP
+    # Marqueur pour identifier les RP
     is_rp = fields.Boolean(string="Est un RP", default=False)
+    
+    # Relations inverses
+    formation_ids = fields.One2many('school.formation', 'rp_id', string="Formations gérées")
+    formation_count = fields.Integer(string="Nombre de formations", compute='_compute_formation_count')
 
-    # Extension du modèle res.partner pour gérer les groupes d'entreprises
-    is_group = fields.Boolean(string="Est un Groupe d'entreprises")
-    siren = fields.Char(string="SIREN")
-    siege_social = fields.Char(string="Siège Social") # Note: Odoo a déjà street/city, mais on garde le vôtre si vous y tenez
-
-    # --- LOGIQUE DU SMART BUTTON ---
-    # Ce champ va compter combien d'entreprises sont rattachées à ce groupe
-    subsidiary_count = fields.Integer(string="Nombre de filiales", compute='_compute_subsidiary_count')
-
-    def _compute_subsidiary_count(self):
+    @api.depends('formation_ids')
+    def _compute_formation_count(self):
         for record in self:
-            # On compte les contacts qui ont ce groupe comme parent (parent_id)
-            # et qui sont des sociétés (is_company=True)
-            record.subsidiary_count = self.env['res.partner'].search_count([
-                ('parent_id', '=', record.id),
-                ('is_company', '=', True)
-            ])
+            record.formation_count = len(record.formation_ids)
 
-    # Fonction qui se lance quand on clique sur le bouton "Filiales"
-    def action_view_subsidiaries(self):
-        self.ensure_one()
-        return {
-            'name': 'Filiales du Groupe',
-            'type': 'ir.actions.act_window',
-            'res_model': 'res.partner',
-            'view_mode': 'tree,form',
-            # On filtre pour ne montrer que les enfants de ce groupe
-            'domain': [('parent_id', '=', self.id), ('is_company', '=', True)],
-            # Quand on crée une filiale depuis cette vue, elle est automatiquement rattachée au groupe
-            'context': {'default_parent_id': self.id, 'default_is_company': True}
-        }
+
+# ========== FORMATION ==========
+class SchoolFormation(models.Model):
+    _name = 'school.formation'
+    _description = 'Formation'
+    _rec_name = 'type_formation'
+
+    type_formation = fields.Char(string="Type de formation", required=True)
+    rp_id = fields.Many2one('res.partner', string="Responsable Pédagogique", 
+                            domain=[('is_rp', '=', True)], required=True)
+    
+    # Relations inverses
+    personne_ids = fields.One2many('school.personne', 'formation_id', string="Étudiants")
+    etudiant_count = fields.Integer(string="Nombre d'étudiants", compute='_compute_etudiant_count')
+
+    @api.depends('personne_ids')
+    def _compute_etudiant_count(self):
+        for record in self:
+            record.etudiant_count = len(record.personne_ids.filtered(lambda p: p.type_profil == 'etudiant'))
+
+
+# ========== PERSONNE (Étudiant, Alumni, Intervenant, Salarié) ==========
+class SchoolPersonne(models.Model):
+    _name = 'school.personne'
+    _description = 'Personne (Étudiant, Alumni, Intervenant, Salarié)'
+    _rec_name = 'display_name'
+
+    nom = fields.Char(string="Nom", required=True)
+    prenom = fields.Char(string="Prénom", required=True)
+    display_name = fields.Char(string="Nom complet", compute='_compute_display_name', store=True)
+    email = fields.Char(string="Email")
+    adresse = fields.Text(string="Adresse")
+    telephone = fields.Char(string="Téléphone")
+    
+    # Marqueurs de profil
+    is_alumni = fields.Boolean(string="Est un Alumni", default=False)
+    type_profil = fields.Selection([
+        ('etudiant', 'Étudiant'),
+        ('alumni', 'Alumni'),
+        ('intervenant', 'Intervenant'),
+        ('salarie', 'Salarié'),
+    ], string="Type de profil", required=True, default='etudiant')
+    
+    poste = fields.Char(string="Poste")
+    is_intervenant = fields.Boolean(string="Est intervenant", default=False)
+    
+    # Relations
+    entreprise_id = fields.Many2one('entreprise.entreprise', string="Entreprise", 
+                                    help="Entreprise d'emploi pour les salariés")
+    formation_id = fields.Many2one('school.formation', string="Formation", 
+                                   help="Formation suivie (pour les étudiants)")
+    
+    # Relations inverses pour les contrats
+    contrat_etudiant_ids = fields.One2many('contrat.contrat', 'personne_etudiant_id', string="Contrats (en tant qu'étudiant)")
+    contrat_tuteur_ids = fields.One2many('contrat.contrat', 'personne_tuteur_id', string="Contrats (en tant que tuteur)")
+
+    @api.depends('nom', 'prenom')
+    def _compute_display_name(self):
+        for record in self:
+            record.display_name = f"{record.prenom} {record.nom}"
