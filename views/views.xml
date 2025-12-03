@@ -31,7 +31,7 @@
 
             <!-- Onglet supplémentaire pour les RP -->
             <notebook position="inside">
-                <page string="Infos Admin RP" attrs="{'invisible': [('is_rp', '=', False)]}">
+                <page string="Infos Admin RP" invisible="not is_rp">
                     <group>
                         <group>
                             <field name="id" string="ID RP (Unique)" readonly="1"/>
@@ -161,10 +161,10 @@
                     </group>
                     <group>
                         <group>
-                            <field name="formation_id" attrs="{'invisible': [('type_profil', 'not in', ['etudiant', 'alumni'])]}"/>
+                            <field name="formation_id" invisible="type_profil not in ('etudiant', 'alumni')"/>
                         </group>
                         <group>
-                            <field name="entreprise_id" attrs="{'invisible': [('type_profil', '!=', 'salarie')]}"/>
+                            <field name="entreprise_id" invisible="type_profil != 'salarie'"/>
                         </group>
                     </group>
                 </sheet>
