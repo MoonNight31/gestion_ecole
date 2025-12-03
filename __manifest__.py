@@ -5,7 +5,8 @@
     'version': '1.0',
     'depends': ['base'], # On a besoin du module de base (Contacts)
     'data': [
-        'views/views.xml', # On charge le fichier d'interface
+        'security/ir.model.access.csv',  # <--- AJOUTEZ CETTE LIGNE EN PREMIER
+        'views/views.xml',
     ],
     'installable': True,
     'application': True,

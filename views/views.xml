@@ -54,5 +54,52 @@
               action="action_rp_list" 
               sequence="1"/>
 
+    <record id="view_formation_tree" model="ir.ui.view">
+        <field name="name">school.formation.tree</field>
+        <field name="model">school.formation</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="id" string="ID" width="50px"/>
+                <field name="name"/>
+                <field name="rp_id"/>
+                <field name="create_date" string="Créée le"/>
+                <field name="write_date" string="MàJ le"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_formation_form" model="ir.ui.view">
+        <field name="name">school.formation.form</field>
+        <field name="model">school.formation</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="rp_id"/>
+                        </group>
+                        <group>
+                            <field name="create_date" readonly="1"/>
+                            <field name="write_date" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_formation" model="ir.actions.act_window">
+        <field name="name">Formations</field>
+        <field name="res_model">school.formation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_formation" 
+              name="Formations" 
+              parent="menu_school_root" 
+              action="action_formation" 
+              sequence="2"/>
+
   </data>
 </odoo>
