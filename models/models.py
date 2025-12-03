@@ -66,13 +66,11 @@ class SchoolPersonne(models.Model):
     
     # Relations
     entreprise_id = fields.Many2one('entreprise.entreprise', string="Entreprise", 
+                                    ondelete='set null',
                                     help="Entreprise d'emploi pour les salariés")
-    formation_id = fields.Many2one('school.formation', string="Formation", 
+    formation_id = fields.Many2one('school.formation', string="Formation",
+                                   ondelete='set null', 
                                    help="Formation suivie (pour les étudiants)")
-    
-    # Relations inverses pour les contrats
-    contrat_etudiant_ids = fields.One2many('contrat.contrat', 'personne_etudiant_id', string="Contrats (en tant qu'étudiant)")
-    contrat_tuteur_ids = fields.One2many('contrat.contrat', 'personne_tuteur_id', string="Contrats (en tant que tuteur)")
 
     @api.depends('nom', 'prenom')
     def _compute_display_name(self):

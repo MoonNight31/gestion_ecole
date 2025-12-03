@@ -31,7 +31,7 @@
 
             <!-- Onglet supplémentaire pour les RP -->
             <notebook position="inside">
-                <page string="Infos Admin RP" invisible="not is_rp">
+                <page string="Infos Admin RP" attrs="{'invisible': [('is_rp', '=', False)]}">
                     <group>
                         <group>
                             <field name="id" string="ID RP (Unique)" readonly="1"/>
@@ -161,36 +161,12 @@
                     </group>
                     <group>
                         <group>
-                            <field name="formation_id" invisible="type_profil not in ['etudiant', 'alumni']"/>
+                            <field name="formation_id" attrs="{'invisible': [('type_profil', 'not in', ['etudiant', 'alumni'])]}"/>
                         </group>
                         <group>
-                            <field name="entreprise_id" invisible="type_profil != 'salarie'"/>
+                            <field name="entreprise_id" attrs="{'invisible': [('type_profil', '!=', 'salarie')]}"/>
                         </group>
                     </group>
-                    <notebook>
-                        <page string="Contrats (Étudiant)" invisible="type_profil != 'etudiant'">
-                            <field name="contrat_etudiant_ids">
-                                <tree>
-                                    <field name="type_contrat"/>
-                                    <field name="entreprise_id"/>
-                                    <field name="personne_tuteur_id"/>
-                                    <field name="date_started"/>
-                                    <field name="date_ended"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Contrats (Tuteur)" invisible="type_profil != 'salarie'">
-                            <field name="contrat_tuteur_ids">
-                                <tree>
-                                    <field name="type_contrat"/>
-                                    <field name="personne_etudiant_id"/>
-                                    <field name="entreprise_id"/>
-                                    <field name="date_started"/>
-                                    <field name="date_ended"/>
-                                </tree>
-                            </field>
-                        </page>
-                    </notebook>
                 </sheet>
             </form>
         </field>
