@@ -1,0 +1,58 @@
+<odoo>
+  <data>
+
+    <record id="view_rp_tree" model="ir.ui.view">
+        <field name="name">res.partner.rp.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="id" string="ID RP" width="50px"/>
+                <field name="display_name" string="Nom &amp; Prénom"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="write_date" string="Dernière MAJ" widget="date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_partner_rp_form" model="ir.ui.view">
+        <field name="name">res.partner.rp.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            
+            <field name="category_id" position="after">
+                <field name="is_rp"/>
+            </field>
+
+            <notebook position="inside">
+                <page string="Infos Admin RP" invisible="not is_rp">
+                    <group>
+                        <group>
+                            <field name="id" string="ID RP (Unique)" readonly="1"/>
+                            <field name="create_date" string="Date de création" readonly="1"/>
+                            <field name="write_date" string="Dernière modification" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <record id="action_rp_list" model="ir.actions.act_window">
+        <field name="name">Mes RP</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="view_rp_tree"/> <field name="domain">[('is_rp', '=', True)]</field> <field name="context">{'default_is_rp': True, 'default_is_company': False}</field>
+    </record>
+
+    <menuitem id="menu_school_root" name="Gestion École" sequence="10" web_icon="base,static/description/icon.png"/>
+    
+    <menuitem id="menu_rp" 
+              name="Responsables Pédagogiques" 
+              parent="menu_school_root" 
+              action="action_rp_list" 
+              sequence="1"/>
+
+  </data>
+</odoo>
