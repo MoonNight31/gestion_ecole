@@ -10,7 +10,7 @@ class ResPartner(models.Model):
     is_rp = fields.Boolean(string="Est un RP", default=False)
     
     # Type de personne (pour les particuliers)
-    type_personne = fields.Selection([
+    type_profil = fields.Selection([
         ('etudiant', 'Étudiant'),
         ('alumni', 'Alumni'),
         ('intervenant', 'Intervenant'),
@@ -40,7 +40,7 @@ class ResPartner(models.Model):
     @api.onchange('is_rp')
     def _onchange_is_rp(self):
         if self.is_rp:
-            self.type_personne = 'rp'
+            self.type_profil = 'rp'
             self.is_company = False
 
 
@@ -57,7 +57,7 @@ class SchoolFormation(models.Model):
     
     # Relations inverses
     etudiant_ids = fields.One2many('res.partner', 'formation_id', string="Étudiants",
-                                   domain=[('type_personne', '=', 'etudiant')])
+                                   domain=[('type_profil', '=', 'etudiant')])
     etudiant_count = fields.Integer(string="Nombre d'étudiants", compute='_compute_etudiant_count')
 
     @api.depends('etudiant_ids')
