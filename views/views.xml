@@ -102,7 +102,7 @@
                                     <field name="name"/>
                                     <field name="email"/>
                                     <field name="phone"/>
-                                    <field name="type_personne"/>
+                                    <field name="type_profil"/>
                                 </tree>
                             </field>
                         </page>
@@ -154,7 +154,7 @@
                         <group string="Scolarité">
                             <field name="formation_id" required="1"/>
                             <field name="is_alumni"/>
-                            <field name="type_personne" invisible="1"/>
+                            <field name="type_profil" invisible="1"/>
                             <field name="is_company" invisible="1"/>
                         </group>
                     </group>
@@ -176,8 +176,8 @@
         <field name="name">Étudiants</field>
         <field name="res_model">res.partner</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('type_personne', '=', 'etudiant'), ('is_company', '=', False)]</field>
-        <field name="context">{'default_type_personne': 'etudiant', 'default_is_company': False}</field>
+        <field name="domain">[('type_profil', '=', 'etudiant'), ('is_company', '=', False)]</field>
+        <field name="context">{'default_type_profil': 'etudiant', 'default_is_company': False}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('view_etudiant_tree')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_etudiant_form')})]"/>
@@ -189,10 +189,9 @@
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <tree string="Alumni">
-                <field name="nom"/>
-                <field name="prenom"/>
+                <field name="name"/>
                 <field name="email"/>
-                <field name="telephone"/>
+                <field name="phone"/>
                 <field name="formation_id"/>
                 <field name="poste"/>
             </tree>
@@ -205,22 +204,34 @@
         <field name="arch" type="xml">
             <form string="Alumni">
                 <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom complet" required="1"/>
+                        </h1>
+                    </div>
                     <group>
                         <group string="Informations personnelles">
-                            <field name="nom" required="1"/>
-                            <field name="prenom" required="1"/>
                             <field name="email"/>
-                            <field name="telephone"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
                         </group>
                         <group string="Parcours">
                             <field name="formation_id"/>
                             <field name="poste"/>
                             <field name="type_profil" invisible="1"/>
                             <field name="is_alumni" invisible="1"/>
+                            <field name="is_company" invisible="1"/>
                         </group>
                     </group>
                     <group string="Adresse">
-                        <field name="adresse" placeholder="Adresse complète..."/>
+                        <field name="street" placeholder="Rue..."/>
+                        <field name="street2"/>
+                        <div class="o_address_format">
+                            <field name="zip" placeholder="Code postal" class="o_address_zip"/>
+                            <field name="city" placeholder="Ville" class="o_address_city"/>
+                        </div>
+                        <field name="country_id" placeholder="Pays"/>
                     </group>
                 </sheet>
             </form>
@@ -244,10 +255,9 @@
         <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <tree string="Intervenants">
-                <field name="nom"/>
-                <field name="prenom"/>
+                <field name="name"/>
                 <field name="email"/>
-                <field name="telephone"/>
+                <field name="phone"/>
                 <field name="poste"/>
             </tree>
         </field>
@@ -259,21 +269,33 @@
         <field name="arch" type="xml">
             <form string="Intervenant">
                 <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom complet" required="1"/>
+                        </h1>
+                    </div>
                     <group>
                         <group string="Informations personnelles">
-                            <field name="nom" required="1"/>
-                            <field name="prenom" required="1"/>
                             <field name="email"/>
-                            <field name="telephone"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
                         </group>
                         <group string="Professionnel">
                             <field name="poste"/>
                             <field name="type_profil" invisible="1"/>
                             <field name="is_intervenant" invisible="1"/>
+                            <field name="is_company" invisible="1"/>
                         </group>
                     </group>
                     <group string="Adresse">
-                        <field name="adresse" placeholder="Adresse complète..."/>
+                        <field name="street" placeholder="Rue..."/>
+                        <field name="street2"/>
+                        <div class="o_address_format">
+                            <field name="zip" placeholder="Code postal" class="o_address_zip"/>
+                            <field name="city" placeholder="Ville" class="o_address_city"/>
+                        </div>
+                        <field name="country_id" placeholder="Pays"/>
                     </group>
                 </sheet>
             </form>
@@ -300,7 +322,7 @@
                 <field name="name"/>
                 <field name="email"/>
                 <field name="phone"/>
-                <field name="type_personne"/>
+                <field name="type_profil"/>
                 <field name="formation_id"/>
             </tree>
         </field>
@@ -325,7 +347,7 @@
                             <field name="mobile"/>
                         </group>
                         <group>
-                            <field name="type_personne"/>
+                            <field name="type_profil"/>
                             <field name="is_alumni"/>
                             <field name="is_intervenant"/>
                             <field name="poste"/>
@@ -333,7 +355,7 @@
                         </group>
                     </group>
                     <group>
-                        <field name="formation_id" invisible="type_personne not in ('etudiant', 'alumni')"/>
+                        <field name="formation_id" invisible="type_profil not in ('etudiant', 'alumni')"/>
                     </group>
                     <group string="Adresse">
                         <field name="street" placeholder="Rue..."/>
@@ -353,7 +375,7 @@
         <field name="name">Toutes les Personnes</field>
         <field name="res_model">res.partner</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('is_company', '=', False), ('type_personne', '!=', False)]</field>
+        <field name="domain">[('is_company', '=', False), ('type_profil', '!=', False)]</field>
     </record>
 
     <!-- ========== MENU ========== -->
