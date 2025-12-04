@@ -40,7 +40,7 @@
                             <field name="formation_count" string="Nombre de formations"/>
                         </group>
                     </group>
-                    <field name="formation_ids">
+                    <field name="formation_rp_ids">
                         <tree>
                             <field name="type_formation"/>
                             <field name="etudiant_count"/>
@@ -97,12 +97,12 @@
                     </group>
                     <notebook>
                         <page string="Étudiants">
-                            <field name="personne_ids" domain="[('type_profil', '=', 'etudiant')]">
+                            <field name="etudiant_ids">
                                 <tree>
-                                    <field name="display_name"/>
+                                    <field name="name"/>
                                     <field name="email"/>
-                                    <field name="telephone"/>
-                                    <field name="type_profil"/>
+                                    <field name="phone"/>
+                                    <field name="type_personne"/>
                                 </tree>
                             </field>
                         </page>
@@ -121,13 +121,13 @@
     <!-- ========== ÉTUDIANTS ========== -->
     <record id="view_etudiant_tree" model="ir.ui.view">
         <field name="name">etudiant.tree</field>
-        <field name="model">school.personne</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <tree string="Étudiants">
-                <field name="nom"/>
-                <field name="prenom"/>
+                <field name="name"/>
                 <field name="email"/>
-                <field name="telephone"/>
+                <field name="phone"/>
+                <field name="mobile"/>
                 <field name="formation_id"/>
             </tree>
         </field>
@@ -135,25 +135,37 @@
 
     <record id="view_etudiant_form" model="ir.ui.view">
         <field name="name">etudiant.form</field>
-        <field name="model">school.personne</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <form string="Étudiant">
                 <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom complet" required="1"/>
+                        </h1>
+                    </div>
                     <group>
                         <group string="Informations personnelles">
-                            <field name="nom" required="1"/>
-                            <field name="prenom" required="1"/>
                             <field name="email"/>
-                            <field name="telephone"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
                         </group>
                         <group string="Scolarité">
                             <field name="formation_id" required="1"/>
                             <field name="is_alumni"/>
-                            <field name="type_profil" invisible="1"/>
+                            <field name="type_personne" invisible="1"/>
+                            <field name="is_company" invisible="1"/>
                         </group>
                     </group>
                     <group string="Adresse">
-                        <field name="adresse" placeholder="Adresse complète..."/>
+                        <field name="street" placeholder="Rue..."/>
+                        <field name="street2"/>
+                        <div class="o_address_format">
+                            <field name="zip" placeholder="Code postal" class="o_address_zip"/>
+                            <field name="city" placeholder="Ville" class="o_address_city"/>
+                        </div>
+                        <field name="country_id" placeholder="Pays"/>
                     </group>
                 </sheet>
             </form>
@@ -162,10 +174,10 @@
 
     <record id="action_etudiant" model="ir.actions.act_window">
         <field name="name">Étudiants</field>
-        <field name="res_model">school.personne</field>
+        <field name="res_model">res.partner</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('type_profil', '=', 'etudiant')]</field>
-        <field name="context">{'default_type_profil': 'etudiant'}</field>
+        <field name="domain">[('type_personne', '=', 'etudiant'), ('is_company', '=', False)]</field>
+        <field name="context">{'default_type_personne': 'etudiant', 'default_is_company': False}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('view_etudiant_tree')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_etudiant_form')})]"/>
@@ -174,7 +186,7 @@
     <!-- ========== ALUMNI ========== -->
     <record id="view_alumni_tree" model="ir.ui.view">
         <field name="name">alumni.tree</field>
-        <field name="model">school.personne</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <tree string="Alumni">
                 <field name="nom"/>
@@ -189,7 +201,7 @@
 
     <record id="view_alumni_form" model="ir.ui.view">
         <field name="name">alumni.form</field>
-        <field name="model">school.personne</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <form string="Alumni">
                 <sheet>
@@ -217,7 +229,7 @@
 
     <record id="action_alumni" model="ir.actions.act_window">
         <field name="name">Alumni</field>
-        <field name="res_model">school.personne</field>
+        <field name="res_model">res.partner</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('type_profil', '=', 'alumni')]</field>
         <field name="context">{'default_type_profil': 'alumni', 'default_is_alumni': True}</field>
@@ -229,7 +241,7 @@
     <!-- ========== INTERVENANTS ========== -->
     <record id="view_intervenant_tree" model="ir.ui.view">
         <field name="name">intervenant.tree</field>
-        <field name="model">school.personne</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <tree string="Intervenants">
                 <field name="nom"/>
@@ -243,7 +255,7 @@
 
     <record id="view_intervenant_form" model="ir.ui.view">
         <field name="name">intervenant.form</field>
-        <field name="model">school.personne</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <form string="Intervenant">
                 <sheet>
@@ -270,7 +282,7 @@
 
     <record id="action_intervenant" model="ir.actions.act_window">
         <field name="name">Intervenants</field>
-        <field name="res_model">school.personne</field>
+        <field name="res_model">res.partner</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('type_profil', '=', 'intervenant')]</field>
         <field name="context">{'default_type_profil': 'intervenant', 'default_is_intervenant': True}</field>
@@ -281,45 +293,56 @@
 
     <!-- ========== VUE GÉNÉRIQUE PERSONNES (pour accès complet) ========== -->
     <record id="view_personne_tree" model="ir.ui.view">
-        <field name="name">school.personne.tree</field>
-        <field name="model">school.personne</field>
+        <field name="name">res.partner.tree.personnes</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <tree string="Toutes les Personnes">
-                <field name="nom"/>
-                <field name="prenom"/>
+                <field name="name"/>
                 <field name="email"/>
-                <field name="telephone"/>
-                <field name="type_profil"/>
+                <field name="phone"/>
+                <field name="type_personne"/>
                 <field name="formation_id"/>
             </tree>
         </field>
     </record>
 
     <record id="view_personne_form" model="ir.ui.view">
-        <field name="name">school.personne.form</field>
-        <field name="model">school.personne</field>
+        <field name="name">res.partner.form.personnes</field>
+        <field name="model">res.partner</field>
         <field name="arch" type="xml">
             <form string="Personne">
                 <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom complet" required="1"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
-                            <field name="nom"/>
-                            <field name="prenom"/>
                             <field name="email"/>
-                            <field name="telephone"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
                         </group>
                         <group>
-                            <field name="type_profil"/>
+                            <field name="type_personne"/>
                             <field name="is_alumni"/>
                             <field name="is_intervenant"/>
                             <field name="poste"/>
+                            <field name="is_company" invisible="1"/>
                         </group>
                     </group>
                     <group>
-                        <field name="adresse" placeholder="Adresse complète..."/>
+                        <field name="formation_id" invisible="type_personne not in ('etudiant', 'alumni')"/>
                     </group>
-                    <group>
-                        <field name="formation_id" invisible="type_profil not in ('etudiant', 'alumni')"/>
+                    <group string="Adresse">
+                        <field name="street" placeholder="Rue..."/>
+                        <field name="street2"/>
+                        <div class="o_address_format">
+                            <field name="zip" placeholder="Code postal" class="o_address_zip"/>
+                            <field name="city" placeholder="Ville" class="o_address_city"/>
+                        </div>
+                        <field name="country_id" placeholder="Pays"/>
                     </group>
                 </sheet>
             </form>
@@ -328,8 +351,9 @@
 
     <record id="action_personne" model="ir.actions.act_window">
         <field name="name">Toutes les Personnes</field>
-        <field name="res_model">school.personne</field>
+        <field name="res_model">res.partner</field>
         <field name="view_mode">tree,form</field>
+        <field name="domain">[('is_company', '=', False), ('type_personne', '!=', False)]</field>
     </record>
 
     <!-- ========== MENU ========== -->
