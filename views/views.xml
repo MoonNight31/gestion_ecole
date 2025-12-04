@@ -167,6 +167,8 @@
                         </div>
                         <field name="country_id" placeholder="Pays"/>
                     </group>
+                    <notebook>
+                    </notebook>
                 </sheet>
             </form>
         </field>
