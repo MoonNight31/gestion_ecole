@@ -1,6 +1,6 @@
 {
     'name': "Gestion École",
-    'icon': '/base/static/description/ecole.png',
+    'icon': '/gestion_ecole/static/description/icon.png',
     'summary': "Gestion des formations, RP et étudiants",
     'description': """
         Module de gestion d'école
