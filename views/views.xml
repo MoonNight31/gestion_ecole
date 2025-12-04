@@ -384,7 +384,7 @@
     <menuitem id="menu_school_root" 
               name="Gestion École" 
               sequence="10" 
-              web_icon="base,static/description/icon.png"/>
+              web_icon="gestion_ecole,static/description/icon.png"/>
     
     <menuitem id="menu_rp" 
               name="Responsables Pédagogiques" 
