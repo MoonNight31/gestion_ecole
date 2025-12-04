@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Responsables Pédagogiques (RP) -->
+        <record id="demo_rp_dupont" model="res.partner">
+            <field name="name">Marie Dupont</field>
+            <field name="email">marie.dupont@ecole.fr</field>
+            <field name="phone">+33 1 23 45 67 89</field>
+            <field name="is_rp" eval="True"/>
+            <field name="type_profil">rp</field>
+            <field name="is_company" eval="False"/>
+            <field name="street">15 Rue de l'Université</field>
+            <field name="zip">75007</field>
+            <field name="city">Paris</field>
+        </record>
+
+        <record id="demo_rp_martin" model="res.partner">
+            <field name="name">Jean Martin</field>
+            <field name="email">jean.martin@ecole.fr</field>
+            <field name="phone">+33 1 23 45 67 90</field>
+            <field name="is_rp" eval="True"/>
+            <field name="type_profil">rp</field>
+            <field name="is_company" eval="False"/>
+            <field name="street">20 Avenue des Sciences</field>
+            <field name="zip">69007</field>
+            <field name="city">Lyon</field>
+        </record>
+
+        <!-- Formations -->
+        <record id="demo_formation_master_info" model="school.formation">
+            <field name="type_formation">Master Informatique</field>
+            <field name="rp_id" ref="demo_rp_dupont"/>
+        </record>
+
+        <record id="demo_formation_licence_gestion" model="school.formation">
+            <field name="type_formation">Licence Gestion d'Entreprise</field>
+            <field name="rp_id" ref="demo_rp_martin"/>
+        </record>
+
+        <record id="demo_formation_bachelor_marketing" model="school.formation">
+            <field name="type_formation">Bachelor Marketing Digital</field>
+            <field name="rp_id" ref="demo_rp_dupont"/>
+        </record>
+
+        <!-- Étudiants -->
+        <record id="demo_etudiant_alice" model="res.partner">
+            <field name="name">Alice Bernard</field>
+            <field name="email">alice.bernard@student.ecole.fr</field>
+            <field name="phone">+33 6 12 34 56 78</field>
+            <field name="type_profil">etudiant</field>
+            <field name="formation_id" ref="demo_formation_master_info"/>
+            <field name="is_company" eval="False"/>
+            <field name="street">5 Rue des Étudiants</field>
+            <field name="zip">75013</field>
+            <field name="city">Paris</field>
+        </record>
+
+        <record id="demo_etudiant_bob" model="res.partner">
+            <field name="name">Bob Durand</field>
+            <field name="email">bob.durand@student.ecole.fr</field>
+            <field name="phone">+33 6 23 45 67 89</field>
+            <field name="type_profil">etudiant</field>
+            <field name="formation_id" ref="demo_formation_master_info"/>
+            <field name="is_company" eval="False"/>
+            <field name="street">12 Boulevard de la République</field>
+            <field name="zip">75011</field>
+            <field name="city">Paris</field>
+        </record>
+
+        <record id="demo_etudiant_claire" model="res.partner">
+            <field name="name">Claire Petit</field>
+            <field name="email">claire.petit@student.ecole.fr</field>
+            <field name="phone">+33 6 34 56 78 90</field>
+            <field name="type_profil">etudiant</field>
+            <field name="formation_id" ref="demo_formation_licence_gestion"/>
+            <field name="is_company" eval="False"/>
+            <field name="street">8 Place de la Mairie</field>
+            <field name="zip">69001</field>
+            <field name="city">Lyon</field>
+        </record>
+
+        <record id="demo_etudiant_daniel" model="res.partner">
+            <field name="name">Daniel Roux</field>
+            <field name="email">daniel.roux@student.ecole.fr</field>
+            <field name="phone">+33 6 45 67 89 12</field>
+            <field name="type_profil">etudiant</field>
+            <field name="formation_id" ref="demo_formation_bachelor_marketing"/>
+            <field name="is_company" eval="False"/>
+            <field name="street">7 Rue Gambetta</field>
+            <field name="zip">33000</field>
+            <field name="city">Bordeaux</field>
+        </record>
+
+        <record id="demo_etudiant_elise" model="res.partner">
+            <field name="name">Élise Gauthier</field>
+            <field name="email">elise.gauthier@student.ecole.fr</field>
+            <field name="phone">+33 6 56 78 90 23</field>
+            <field name="type_profil">etudiant</field>
+            <field name="formation_id" ref="demo_formation_master_info"/>
+            <field name="is_company" eval="False"/>
+            <field name="street">14 Rue de la Paix</field>
+            <field name="zip">69003</field>
+            <field name="city">Lyon</field>
+        </record>
+
+        <record id="demo_etudiant_felix" model="res.partner">
+            <field name="name">Félix Garnier</field>
+            <field name="email">felix.garnier@student.ecole.fr</field>
+            <field name="phone">+33 6 67 89 01 34</field>
+            <field name="type_profil">etudiant</field>
+            <field name="formation_id" ref="demo_formation_licence_gestion"/>
+            <field name="is_company" eval="False"/>
+            <field name="street">22 Avenue Foch</field>
+            <field name="zip">75116</field>
+            <field name="city">Paris</field>
+        </record>
+
+        <record id="demo_etudiant_gabrielle" model="res.partner">
+            <field name="name">Gabrielle Renard</field>
+            <field name="email">gabrielle.renard@student.ecole.fr</field>
+            <field name="phone">+33 6 78 90 12 45</field>
+            <field name="type_profil">etudiant</field>
+            <field name="formation_id" ref="demo_formation_bachelor_marketing"/>
+            <field name="is_company" eval="False"/>
+            <field name="street">9 Cours Victor Hugo</field>
+            <field name="zip">33000</field>
+            <field name="city">Bordeaux</field>
+        </record>
+
+        <record id="demo_etudiant_hugo" model="res.partner">
+            <field name="name">Hugo Leroy</field>
+            <field name="email">hugo.leroy@student.ecole.fr</field>
+            <field name="phone">+33 6 89 01 23 56</field>
+            <field name="type_profil">etudiant</field>
+            <field name="formation_id" ref="demo_formation_master_info"/>
+            <field name="is_company" eval="False"/>
+            <field name="street">31 Rue Lafayette</field>
+            <field name="zip">75009</field>
+            <field name="city">Paris</field>
+        </record>
+
+        <record id="demo_etudiant_isabelle" model="res.partner">
+            <field name="name">Isabelle Perrin</field>
+            <field name="email">isabelle.perrin@student.ecole.fr</field>
+            <field name="phone">+33 6 90 12 34 67</field>
+            <field name="type_profil">etudiant</field>
+            <field name="formation_id" ref="demo_formation_licence_gestion"/>
+            <field name="is_company" eval="False"/>
+            <field name="street">18 Place des Terreaux</field>
+            <field name="zip">69001</field>
+            <field name="city">Lyon</field>
+        </record>
+
+        <!-- Alumni -->
+        <record id="demo_alumni_david" model="res.partner">
+            <field name="name">David Lefebvre</field>
+            <field name="email">david.lefebvre@alumni.ecole.fr</field>
+            <field name="phone">+33 6 45 67 89 01</field>
+            <field name="type_profil">alumni</field>
+            <field name="formation_id" ref="demo_formation_master_info"/>
+            <field name="is_alumni" eval="True"/>
+            <field name="poste">Développeur Senior</field>
+            <field name="is_company" eval="False"/>
+            <field name="street">25 Rue de la Technologie</field>
+            <field name="zip">75015</field>
+            <field name="city">Paris</field>
+        </record>
+
+        <record id="demo_alumni_emma" model="res.partner">
+            <field name="name">Emma Rousseau</field>
+            <field name="email">emma.rousseau@alumni.ecole.fr</field>
+            <field name="phone">+33 6 56 78 90 12</field>
+            <field name="type_profil">alumni</field>
+            <field name="formation_id" ref="demo_formation_bachelor_marketing"/>
+            <field name="is_alumni" eval="True"/>
+            <field name="poste">Chef de Projet Marketing</field>
+            <field name="is_company" eval="False"/>
+            <field name="street">18 Avenue des Champs</field>
+            <field name="zip">75008</field>
+            <field name="city">Paris</field>
+        </record>
+
+        <!-- Intervenants -->
+        <record id="demo_intervenant_francois" model="res.partner">
+            <field name="name">François Mercier</field>
+            <field name="email">francois.mercier@consultant.fr</field>
+            <field name="phone">+33 6 67 89 01 23</field>
+            <field name="type_profil">intervenant</field>
+            <field name="is_intervenant" eval="True"/>
+            <field name="poste">Consultant IA</field>
+            <field name="is_company" eval="False"/>
+            <field name="street">10 Rue de l'Innovation</field>
+            <field name="zip">75016</field>
+            <field name="city">Paris</field>
+        </record>
+
+        <record id="demo_intervenant_gabrielle" model="res.partner">
+            <field name="name">Gabrielle Simon</field>
+            <field name="email">gabrielle.simon@formateur.fr</field>
+            <field name="phone">+33 6 78 90 12 34</field>
+            <field name="type_profil">intervenant</field>
+            <field name="is_intervenant" eval="True"/>
+            <field name="poste">Formatrice Management</field>
+            <field name="is_company" eval="False"/>
+            <field name="street">30 Rue de la Formation</field>
+            <field name="zip">69003</field>
+            <field name="city">Lyon</field>
+        </record>
+
+    </data>
+</odoo>
